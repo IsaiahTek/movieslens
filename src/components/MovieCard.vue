@@ -35,7 +35,7 @@ export default {
 </script>
 
 <template>
-  <div class="movie-card">
+  <div class="movie-card" @click="">
     <img :src="'https://image.tmdb.org/t/p/w185/'+srcPath" alt="">
     <div class="movie-text-box">
       <div class="content">
@@ -55,6 +55,7 @@ export default {
   margin-bottom: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 .movie-title{
   font-size: large;

@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
+import { useMovieStore } from './store/movies';
+
 </script>
 
 <template>
@@ -28,7 +31,9 @@ import { RouterLink, RouterView } from 'vue-router'
 header{
   padding: 2% 7%;
   display: block;
-  background-color: rgba(255, 255, 255, 0.151);
+  background-color: rgb(3, 32, 30);
+  position: sticky;
+  top: 0;
 }
 input{
   background-color: rgba(0, 0, 0, 0.274);
@@ -71,4 +76,5 @@ nav div.nav-links div.home a{
 nav div.nav-links div .active a, .nav-links > .active a{
   color: rgb(255, 187, 0);
 }
-</style>
+</style>import { onMounted } from 'vue';
+

@@ -1,58 +1,42 @@
 <script setup lang="ts">
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, computed } from "vue";
+  import { useRouter } from 'vue-router';
   import MovieCard from "../components/MovieCard.vue";
-  
-  const headers = {
-    Authorization: import.meta.env.TMDB_AUTHORIZATION,
-    Accept: import.meta.env.TMDB_API_ACCEPT
+  import { useMovieStore } from "@/store/movies";
+
+  const movieStore = useMovieStore();
+
+  const router = useRouter();
+
+  const pageIndex = ref(0);
+
+  const navigateToMovie = (movie:Movie) => {
+    router.push({
+      name: 'movie',
+      params: {id:movie.id},
+    });
   };
 
-  
-  interface Movie {
-    id: number;
-    title: string;
-    overview: string;
-    poster_path:string;
-    vote_average:Number;
-    vote_count:Number;
-    release_date:string;
-    original_language:string;
-  }
-  
-  const movies = ref<Movie[]>([])
-  
-  function getMovies() {
-    fetch(
-      'https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1',
-      {
-        headers: headers
-      }
-    ).then((response)=>{
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((v)=>{
-      movies.value = v.results;
-    })
-  }
 
-onMounted(() => {
-  getMovies();
-});
 
+  
+  onMounted(() => {
+    movieStore.getUpcomingMovies(1);
+  });
+  
+  const movies = computed(()=> movieStore.upcomingMovies);
+  
 </script>
 
 <template>
   <main>
     <section class="movies">
       <div v-for="movie in movies" class="movie">
-        <MovieCard :title="movie.title" :description="movie.overview" :srcPath="movie.poster_path" :rating="movie.vote_average" :likes="movie.vote_count" :language="movie.original_language" :release_date="movie.release_date" />
+        <MovieCard :title="movie.title" :description="movie.overview" :srcPath="movie.poster_path" :rating="movie.vote_average" :likes="movie.vote_count" :language="movie.original_language" :release_date="movie.release_date" @click="navigateToMovie(movie)" />
       </div>   
     </section>
     <div class="load-more">
-      <button>Load More</button>
+      <button>Load More...</button>
     </div>
   </main>
 </template>
