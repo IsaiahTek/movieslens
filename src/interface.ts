@@ -7,4 +7,7 @@ interface Movie {
     vote_count:number;
     release_date:string;
     original_language:string;
+    backdrop_path:string;
+    genre_ids:number[]
 }
+type MovieTypes = "UPCOMING" | "NOWPLAYING" | "POPULAR" | "TOPRATED" | "SIMILAR"

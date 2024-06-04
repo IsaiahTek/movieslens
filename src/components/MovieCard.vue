@@ -1,61 +1,53 @@
-<script>
+<script lang="ts">
+
 export default {
   name: 'MovieCard',
   props: {
-    title: {
-      type: String,
+    movie: {
+      type: Object as () => Movie,
       required: true
     },
-    srcPath: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      required: true
-    },
-    language: {
-      type: String,
-      required: true
-    },
-    likes: {
-      type: Number,
-      required: true
-    },
-    release_date:{
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
+  },
+  methods:{
+    posterOrBackdropPath(){
+      let prefix = 'https://image.tmdb.org/t/p/w185/';
+      let base = this.movie?.poster_path ?? this.movie?.backdrop_path;
+      if(this.movie?.poster_path || this.movie?.backdrop_path){
+        return prefix+base;
+      }else{
+        return '../placeholder.jpeg'
+      }
+    }
   }
 };
 </script>
 
 <template>
-  <div class="movie-card" @click="">
-    <img :src="'https://image.tmdb.org/t/p/w185/'+srcPath" alt="">
+  <div class="movie-card">
+    <img :src="posterOrBackdropPath()" :alt="movie.title">
     <div class="movie-text-box">
       <div class="content">
-        <p class="movie-title">{{title}}</p>
-        <p> &#x2B50; Rating: {{ rating.toString().substring(0, 3) }}</p>
-        <p> Language: {{ language }}</p>
-        <p> Released: {{ release_date }}</p>
+        <p class="movie-title">{{movie.title}}</p>
+        <p> &#x2B50; Rating: {{ movie.vote_average.toString().substring(0, 3) }}</p>
+        <p> Language: {{ movie.original_language }}</p>
+        <p> Released: {{ movie.release_date }}</p>
       </div>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .movie-card{
   border-radius: 20px;
-  border: 1px solid rgb(105, 105, 105);
+  border: 2px solid rgba(255, 255, 255, 0.082);
   margin-bottom: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+}
+.movie-card:hover{
+  transform: scale(1.03);
+  transition: all ease .3s;
 }
 .movie-title{
   font-size: large;

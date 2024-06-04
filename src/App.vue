@@ -11,10 +11,10 @@ import { useMovieStore } from './store/movies';
       <nav>
         <div class="nav-links">
           <div class="home active">
-            <RouterLink to="/">MovieLens</RouterLink>
+            <RouterLink to="/">MoviesLens</RouterLink>
           </div>
           <div class="explore">
-            <RouterLink to="/explore">Explore</RouterLink>
+            <RouterLink to="/movies">Explore</RouterLink>
           </div>
         </div>
         <div class="f-half">
@@ -34,6 +34,7 @@ header{
   background-color: rgb(3, 32, 30);
   position: sticky;
   top: 0;
+  z-index: 1000;
 }
 input{
   background-color: rgba(0, 0, 0, 0.274);

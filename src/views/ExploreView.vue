@@ -1,94 +1,62 @@
 <script setup lang="ts">
-  import { ref, onMounted, computed } from "vue";
+  import { ref, onMounted, computed, watch } from "vue";
   import { useRouter } from 'vue-router';
-  import MovieCard from "../components/MovieCard.vue";
+  import MoviesListView from "../components/MoviesListView.vue";
   import { useMovieStore } from "@/store/movies";
 
   const movieStore = useMovieStore();
 
-  const router = useRouter();
-
-  const pageIndex = ref(0);
-
-  const navigateToMovie = (movie:Movie) => {
-    router.push({
-      name: 'movie',
-      params: {id:movie.id},
-    });
-  };
-
-
-
-  
   onMounted(() => {
     movieStore.getUpcomingMovies(1);
   });
-  
-  const movies = computed(()=> movieStore.upcomingMovies);
-  
-</script>
 
+  const router = useRouter();
+  const movies = ref<Movie[]>([])
+  
+  const types = ["UPCOMING", "NOW PLAYING", "TOP RATED", "POPULAR"]
+  
+  const pageIndex = ref(0);
+  
+  const typeIndex = ref(0)
+
+  movies.value = movieStore.upcomingMovies;
+  
+  watch(()=>typeIndex.value, async(newIndex, oldIndex)=>{
+    if(newIndex != oldIndex){
+      movies.value = await movieStore.getMoviesByType(types[newIndex] as MovieTypes, 1)
+    }
+  })
+</script>
 <template>
-  <main>
-    <section class="movies">
-      <div v-for="movie in movies" class="movie">
-        <MovieCard :title="movie.title" :description="movie.overview" :srcPath="movie.poster_path" :rating="movie.vote_average" :likes="movie.vote_count" :language="movie.original_language" :release_date="movie.release_date" @click="navigateToMovie(movie)" />
-      </div>   
-    </section>
-    <div class="load-more">
-      <button>Load More...</button>
-    </div>
-  </main>
+  <nav class="movie-type-links">
+    <h1>Explore Movies</h1>
+    <button v-for="(type, id) in types" @click="()=>typeIndex = id" :class="typeIndex==id?'active':''">{{type}}</button>
+  </nav>
+  <MoviesListView :movies="movies" @navigate-to-movie="movieStore.navigateToMovie" />
 </template>
 
-<style>
-
-main{
-  padding: 2% 2%;
+<style scoped>
+nav.movie-type-links{
+  padding: 3% 3% 0% 6%;
 }
-
-section.movies{
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 100vw;
-  margin: 0 auto;
-  padding: 10px;
-  /* justify-content: space-around; */
+nav.movie-type-links h1{
+  font-weight: bold;
+  font-size: xx-large;
+  color: rgb(255, 187, 0);
+  margin-bottom: 30px;
 }
-
-section.movies .movie{
-  /* flex: 1; */
-  width: 48%;
-  margin: 0px 1%;
-  /* height: 390px; */
-}
-div.load-more{
-  margin-top: 90px;
-  margin-bottom: 30vh;
-  text-align: center;
-}
-div.load-more button{
+nav.movie-type-links button{
+  padding: 15px 40px;
+  border: 2px solid transparent;
   outline: unset;
-  border: 2px solid rgba(245, 245, 220, 0.541);
-  padding: 15px 30px;
-  background-color: rgba(0, 0, 0, 0.26);
-  color: wheat;
+  background-color: transparent;
+  color: white;
+  font-size: large;
   font-weight: bold;
   cursor: pointer;
-  border-radius: 5px;
 }
-div.load-more button:hover{
-  background-color: rgb(255, 255, 255);
-  color: rgb(41, 30, 0);
-}
-@media (min-width: 1024px) {
-  main{
-    padding: 2% 4%;
-  }
-  section.movies .movie{
-    margin: 0px 13px;
-    /* min-width: 160px; */
-    width: calc(100%/6.9);
-  }
+nav.movie-type-links button.active{
+  border-bottom: 2px solid rgb(255, 187, 0);
+  transition: all ease 1s;
 }
 </style>
