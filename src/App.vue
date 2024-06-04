@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
 import { useMovieStore } from './store/movies';
+
+const search_query = ref("")
 
 </script>
 
@@ -18,7 +20,10 @@ import { useMovieStore } from './store/movies';
           </div>
         </div>
         <div class="f-half">
-          <input placeholder="search" type="search" name="search" id="search">
+          <input v-model="search_query" placeholder="search" type="search" name="search" id="search">
+        </div>
+        <div class="search-result">
+          
         </div>
       </nav>
     </div>

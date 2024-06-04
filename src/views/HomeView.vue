@@ -3,6 +3,7 @@ import { useMovieStore } from '@/store/movies';
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import MoviesListView from '@/components/MoviesListView.vue';
+import MovieTile from '@/components/MovieTile.vue';
 
 const route = useRoute();
 const movie = ref<Movie|null>(null);
@@ -86,20 +87,9 @@ const upNextIndex = (id:number)=>{
     </div>
     <div class="upnext-content">
       <h2>Up Next</h2>
-      <div v-for="id of 3" class="upnext">
-        <img :src=" posterOrBackdropPath(movieStore.upcomingMovies[upNextIndex(id)])" :alt="movieStore.upcomingMovies[upNextIndex(id)]?.title">
-        <!-- <div class="text-container"> -->
-        <div class="text-body">
-          <div class="primary">
-            <h4>{{ movieStore.upcomingMovies[upNextIndex(id)]?.title }}</h4>
-            <p class="overflowing-text">{{ movieStore.upcomingMovies[upNextIndex(id)]?.overview }} ...</p>
-          </div>
-          <div class="secondary">
-            <p>Rating: {{ movieStore.upcomingMovies[upNextIndex(id)]?.vote_average }}</p>
-            <p>{{ movieStore.upcomingMovies[upNextIndex(id)]?.vote_count }}</p>
-          </div>
-        </div>
-    </div>
+      <div v-for="id of 3" class="upnext" @click="movieStore.navigateToMovie(movieStore.upcomingMovies[upNextIndex(id)].id)">
+        <MovieTile :movie="movieStore.upcomingMovies[upNextIndex(id)] as Movie" />
+      </div>
       <!-- </div> -->
     </div>
   </main>
@@ -190,39 +180,7 @@ main.banner div.movie-card img{
   color: bisque;
   font-weight: bold;
 }
-.upnext{
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.062);
-  display: flex;
-  cursor: pointer;
-}
-.upnext img{
-  max-width: 30%;
-  margin-right: 5%;
-}
-.upnext div.primary p.overflowing-text{
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  /* text-overflow: ellipsis; */
-}
-.upnext div.primary p{
-  font-size: smaller;
-}
-.upnext div.secondary p{
-  font-size: x-small;
-}
-.upnext p{
-  color: gray;
-}
-.upnext .text-body, .upnext .primary, .upnext .secondary{
-  display: flex;
-  flex-direction: column;
-}
-.upnext .text-body{
-  justify-content: space-between;
-}
+
 .list{
   margin-top: -4%;
 }
@@ -253,9 +211,7 @@ section.top-rated-movies h1{
   .text-box{
     font-size: larger;
   }
-  div.text-body{
-    font-size: larger;
-  }
+  
   main.banner div.upnext-content{
     margin-right: 5%;
   }
