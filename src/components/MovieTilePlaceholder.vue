@@ -1,46 +1,31 @@
 <script lang="ts">
 export default {
   name: 'MovieTile',
-  props: {
-    movie: {
-      type: Object as ()=> Movie,
-      required: true
-    },
-  },
   methods:{
     posterOrBackdropPath(){
-      let prefix = 'https://image.tmdb.org/t/p/w185/';
-      let base = this.movie?.poster_path ?? this.movie?.backdrop_path;
-      if(this.movie?.poster_path || this.movie?.backdrop_path){
-        return prefix+base;
-      }else{
-        return '../placeholder.jpeg'
-      }
+      return '../placeholder.jpeg'
     }
   }
 };
 </script>
 <template>
-    <img :src=" posterOrBackdropPath()" :alt="movie?.title">
+  <div class="placeholder-glow upnext">
+    <img :src=" posterOrBackdropPath()" class="placeholder">
     <!-- <div class="text-container"> -->
     <div class="text-body">
         <div class="primary">
-        <h4>{{ movie?.title }}</h4>
-        <p class="overflowing-text">{{ movie?.overview }}</p>
+        <h4 class="placeholder width-80 height-20"></h4>
+        <p class="overflowing-text placeholder width-90 height-20"></p>
         </div>
         <div class="secondary">
-        <p>Rating: {{ movie?.vote_average }}</p>
-        <p>{{ movie?.vote_count }}</p>
+        <p class="placeholder width-40 height-20"></p>
+        <p class="placeholder width-20 height-20"></p>
         </div>
     </div>
+  </div>
 </template>
 <style>
-.upnext{
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.062);
-  display: flex;
-  cursor: pointer;
-}
+
 .upnext img{
   max-width: 30%;
   margin-right: 5%;
@@ -67,8 +52,14 @@ export default {
 }
 .upnext .text-body{
   justify-content: space-between;
+  min-width: 65%;
 }
 div.text-body{
   font-size: larger;
+}
+p, h1, h2, h3, h4, h5, h6{
+  /* background-color: white; */
+  /* display: block; */
+  margin-bottom: 2px;
 }
 </style>

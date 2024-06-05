@@ -4,6 +4,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import MoviesListView from '@/components/MoviesListView.vue';
 import MovieTile from '@/components/MovieTile.vue';
+import MovieTilePlaceholder from '@/components/MovieTilePlaceholder.vue';
 
 const route = useRoute();
 const movie = ref<Movie|null>(null);
@@ -68,29 +69,56 @@ const upNextIndex = (id:number)=>{
 
 <template>
   <main class="banner">
-    <div class="main-content">
-      <div class="img-container">
-        <button @click="moveCurrentIndexBy(-1)" class="ctrl prev"> <span>&#x2039;</span></button>
-        <img :src="backdropPathOrPlaceholder()" :alt="movie?.title">
-        <button @click="moveCurrentIndexBy(1)" class="ctrl next"> <span>&#x203A;</span></button>
-      </div>
-      <div class="backdrop"></div>
-      <div class="movie-card">
-        <img :src="posterOrBackdropPath(movie)" :alt="movie?.title">
-        <div class="text-box">
-          <h1>{{ movie?.title }}</h1>
-          <p>{{ movie?.overview }}</p>
-          <p>Rating: {{ movie?.vote_average }}</p>
-          <p> &#128077; {{ movie?.vote_count }}</p>
+    <template v-if="movie">
+      <div class="main-content">
+        <div class="img-container">
+          <button @click="moveCurrentIndexBy(-1)" class="ctrl prev"> <span>&#x2039;</span></button>
+          <img :src="backdropPathOrPlaceholder()" :alt="movie?.title">
+          <button @click="moveCurrentIndexBy(1)" class="ctrl next"> <span>&#x203A;</span></button>
+        </div>
+        <div class="backdrop"></div>
+        <div class="movie-card">
+          <img :src="posterOrBackdropPath(movie)" :alt="movie?.title">
+          <div class="text-box">
+            <h1>{{ movie?.title }}</h1>
+            <p>{{ movie?.overview }}</p>
+            <p>Rating: {{ movie?.vote_average }}</p>
+            <p> &#128077; {{ movie?.vote_count }}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="main-content">
+        <div class="img-container placeholder-glow">
+          <img class="placeholder" style="max-height: 50vh; min-width: 100%; background-size: contain; background-position: center;" :src="backdropPathOrPlaceholder()" >
+        </div>
+        <div class="backdrop"></div>
+        <div class="movie-card placeholder-glow">
+          <img class="placeholder" :src="posterOrBackdropPath(movie)">
+          <div class="text-box width-100" style="display: flex; flex-direction: column">
+            <h1 class="placeholder width-40 height-40"></h1>
+            <p class="placeholder width-90 height-20"></p>
+            <p class="placeholder width-60 height-20"></p>
+            <p class="placeholder width-30 height-20"></p>
+          </div>
+        </div>
+      </div>
+    </template>
     <div class="upnext-content">
       <h2>Up Next</h2>
-      <div v-for="id of 3" class="upnext" @click="movieStore.navigateToMovie(movieStore.upcomingMovies[upNextIndex(id)].id)">
-        <MovieTile :movie="movieStore.upcomingMovies[upNextIndex(id)] as Movie" />
-      </div>
-      <!-- </div> -->
+      <template v-if="movieStore.upcomingMovies.length">
+        <div v-for="id of 3" class="upnext" @click="movieStore.navigateToMovie(movieStore.upcomingMovies[upNextIndex(id)].id)">
+          <template v-if="typeof movieStore.upcomingMovies[upNextIndex(id)] != 'undefined'">
+            <MovieTile :movie="movieStore.upcomingMovies[upNextIndex(id)] as Movie" ></MovieTile>
+          </template>
+        </div>
+      </template>
+      <template v-else>
+        <div v-for="id of 3" >
+          <MovieTilePlaceholder ></MovieTilePlaceholder>
+        </div>
+      </template>
     </div>
   </main>
 
@@ -99,7 +127,6 @@ const upNextIndex = (id:number)=>{
     <MoviesListView class="list" :movies="topRatedMovies" @navigate-to-movie="movieStore.navigateToMovie" ></MoviesListView>
   </section>
 </template>
-
 
 <style scoped>
 main.banner div.main-content{
@@ -190,6 +217,11 @@ section.top-rated-movies h1{
   font-size: xx-large;
   color: rgb(255, 187, 0);
   margin-bottom: 30px;
+}
+
+/* PLACEHOLDER TEXT BOX ITEM VERTICAL MARGIN SETTING */
+.text-box p, .text-box h1{
+  margin-top: 10px;
 }
 @media(min-width: 760px){
   main.banner{

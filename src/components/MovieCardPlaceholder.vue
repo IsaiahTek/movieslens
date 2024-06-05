@@ -2,35 +2,23 @@
 
 export default {
   name: 'MovieCard',
-  props: {
-    movie: {
-      type: Object as () => Movie,
-      required: true
-    },
-  },
   methods:{
     posterOrBackdropPath(){
-      let prefix = 'https://image.tmdb.org/t/p/w185/';
-      let base = this.movie?.poster_path ?? this.movie?.backdrop_path;
-      if(this.movie?.poster_path || this.movie?.backdrop_path){
-        return prefix+base;
-      }else{
-        return '../placeholder.jpeg'
-      }
+      return '../placeholder.jpeg'
     }
   }
 };
 </script>
 
 <template>
-  <div class="movie-card" :class="typeof movie == 'undefined' ? 'placeholder' : ''  ">
-    <img :src="posterOrBackdropPath()" :alt="movie.title">
+  <div class="movie-card placeholder-glow">
+    <img class="placeholder" :src="posterOrBackdropPath()">
     <div class="movie-text-box">
       <div class="content">
-        <p class="movie-title">{{movie.title}}</p>
-        <p> &#x2B50; Rating: {{ movie.vote_average.toString().substring(0, 3) }}</p>
-        <p> Language: {{ movie.original_language }}</p>
-        <p> Released: {{ movie.release_date }}</p>
+        <h1 class="movie-title placeholder width-40 height-20"></h1>
+        <p class="placeholder width-90 height-20"></p>
+        <p class="placeholder width-80 height-20"></p>
+        <p class="placeholder width-20 height-20"></p>
       </div>
     </div>
   </div>
@@ -76,5 +64,9 @@ export default {
   margin-top: -10px;
   box-sizing: border-box;
   font-size: small;
+}
+.movie-text-box .content{
+  display: flex;
+  flex-direction: column;
 }
 </style>

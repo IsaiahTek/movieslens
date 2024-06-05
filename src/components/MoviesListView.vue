@@ -3,9 +3,10 @@
 type Movies = Movie[];
 
 import MovieCard from "./MovieCard.vue";
+import MovieCardPlaceholder from "./MovieCardPlaceholder.vue";
 export default {
   name: 'MoviesListView',
-  components:{MovieCard},
+  components:{MovieCard, MovieCardPlaceholder},
   props: {
     movies: {
       type: Array as () => Movies,
@@ -18,9 +19,16 @@ export default {
 <template>
     <main>
       <section class="movies">
-        <div v-for="movie in movies" class="movie">
-          <MovieCard :movie="movie" @click="$emit('navigateToMovie', movie.id)" />
-        </div>   
+        <template v-if="movies.length">
+          <div v-for="movie in movies" class="movie">
+            <MovieCard :movie="movie" @click="$emit('navigateToMovie', movie.id)" />
+          </div>   
+        </template>
+        <template v-else>
+          <div v-for="_ in 10" class="movie">
+            <MovieCardPlaceholder />
+          </div>
+        </template>
       </section>
       <div class="load-more">
         <button>Load More...</button>
@@ -45,7 +53,7 @@ export default {
   
   section.movies .movie{
     /* flex: 1; */
-    width: 48%;
+    width: 47%;
     margin: 0px 1%;
     /* height: 390px; */
   }
@@ -68,6 +76,26 @@ export default {
     background-color: rgb(255, 255, 255);
     color: rgb(41, 30, 0);
   }
+  @media (min-width: 584px) {
+    main{
+      padding: 2% 4%;
+    }
+    section.movies .movie{
+      margin: 0px 13px;
+      /* min-width: 160px; */
+      width: calc(calc(92%/3) - 14px);
+    }
+  }
+  @media (min-width: 745px) {
+    main{
+      padding: 2% 4%;
+    }
+    section.movies .movie{
+      margin: 0px 13px;
+      /* min-width: 160px; */
+      width: calc(calc(92%/4) - 14px);
+    }
+  }
   @media (min-width: 1024px) {
     main{
       padding: 2% 4%;
@@ -75,7 +103,17 @@ export default {
     section.movies .movie{
       margin: 0px 13px;
       /* min-width: 160px; */
-      width: calc(100%/6.9);
+      width: calc(calc(92%/5) - 14px);
+    }
+  }
+  @media (min-width: 1246px) {
+    main{
+      padding: 2% 4%;
+    }
+    section.movies .movie{
+      margin: 0px 13px;
+      /* min-width: 160px; */
+      width: calc(calc(92%/6) - 14px);
     }
   }
   </style>

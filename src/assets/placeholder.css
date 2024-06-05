@@ -1,0 +1,65 @@
+.placeholder {
+    display: inline-block;
+    min-height: 1em;
+    vertical-align: middle;
+    cursor: wait;
+    background-color: currentcolor;
+    opacity: .6;
+  
+    &.btn::before {
+      display: inline-block;
+      content: "";
+    }
+}
+  
+  /* // Sizing */
+.placeholder-xs {
+    min-height: .6em;
+}
+  
+.placeholder-sm {
+    min-height: .8em;
+}
+  
+.placeholder-lg {
+    min-height: 1.2em;
+}
+  
+  /* // Animation */
+.placeholder-glow {
+    .placeholder {
+      animation: placeholder-glow 2s ease-in-out infinite;
+    }
+}
+  
+@keyframes placeholder-glow {
+    50% {
+      opacity: .2;
+    }
+}
+  
+.placeholder-wave {
+    mask-image: linear-gradient(130deg, black 55%, rgba(0, 0, 0, (1 - .2)) 75%, black 95%);
+    mask-size: 200% 100%;
+    animation: placeholder-wave 2s linear infinite;
+}
+  
+@keyframes placeholder-wave {
+    100% {
+      mask-position: -200% 0%;
+    }
+}
+.width-10{width: 10%;}
+.width-20{width: calc(20%);}
+.width-30{width: 30%;}
+.width-40{width: 40%;}
+.width-50{width: 50%;}
+.width-60{width: 60%;}
+.width-70{width: 70%;}
+.width-80{width: 80%;}
+.width-90{width: 90%;}
+.width-100{width: 100%;}
+
+.height-10{height: 10px;}
+.height-20{height: 20px;}
+.height-30{height: 30px;}

@@ -46,17 +46,23 @@ nav.movie-type-links h1{
   margin-bottom: 30px;
 }
 nav.movie-type-links button{
-  padding: 15px 40px;
+  padding: 15px 10px;
   border: 2px solid transparent;
   outline: unset;
   background-color: transparent;
   color: white;
-  font-size: large;
+  font-size: x-small;
   font-weight: bold;
   cursor: pointer;
 }
 nav.movie-type-links button.active{
   border-bottom: 2px solid rgb(255, 187, 0);
   transition: all ease 1s;
+}
+@media (min-width: 794px) {
+  nav.movie-type-links button{
+    padding: 15px 40px;
+    font-size: large;
+  }
 }
 </style>

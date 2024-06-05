@@ -1,10 +1,12 @@
 import router from "@/router";
 import { defineStore } from "pinia";
+import { fetchMovieByID, fetchMovieByType, search, fetchMovieTrailers } from "./fetch_functions";
 
 interface MovieState{
   upcomingMovies:Movie[],
   lastFetchedPage:number,
   currentViewingMovies:Movie[],
+  searchResults: Movie[],
   genres: {
     id: number,
     name: string
@@ -15,32 +17,11 @@ interface MovieState{
     name: string
   }[]
 }
-const headers = {
-  Authorization: import.meta.env.VITE_API_AUTHORIZATION,
-  accept: import.meta.env.VITE_API_ACCEPT
-};
-async function fetchMovieByType(prop:{type:string, page:number}){
-  let movie = await fetch(
-    `https://api.themoviedb.org/3/movie/${prop.type}?language=en-US&page=${prop.page}`,
-    {
-      headers: headers
-    }
-  ).then((response)=>{
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }else if(response.ok){
-      return response.json();
-    }
-  })
-  .then((v:{results:Movie[]})=>{
-    return v.results;
-  });
-  return movie;
-}
 export const useMovieStore = defineStore('movie', {
   state: (): MovieState =>({
     upcomingMovies: [],
     currentViewingMovies: [],
+    searchResults: [],
     lastFetchedPage:0,
     genres: [
       {
@@ -1111,6 +1092,15 @@ export const useMovieStore = defineStore('movie', {
         name: 'movie',
         params: {id:id},
       });
+    },
+    async fetchSearchResults(searchQuery:string){
+      this.searchResults = await search(searchQuery);
+    },
+    async fetchMovieByID(id:number){
+      return await fetchMovieByID(id);
+    },
+    async fetchTrailers(id:number){
+      return await fetchMovieTrailers(id);
     }
   }
 });
