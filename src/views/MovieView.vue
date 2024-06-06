@@ -4,12 +4,11 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import MoviesListView from '@/components/MoviesListView.vue';
 import YouTubeVideo from '@/components/YouTubeVideo.vue';
-type Trailer = {
-  id:string
-}
+import { emptyMoviesApi } from '@/store/fetch_functions';
+
 const route = useRoute();
 const movie = ref<Movie|null>(null);
-const similarMovies = ref<Movie[]>([]);
+const similarMovies = ref<MoviesApiType>(emptyMoviesApi);
 const youtubeTrailers = ref<Video[]>([])
 
 const movieStore = useMovieStore();
@@ -20,6 +19,10 @@ async function initData(){
   }
   similarMovies.value = await movieStore.getSimilarMovies(Number(route.params.id), 1);
   youtubeTrailers.value = await movieStore.fetchTrailers(Number(route.params.id))
+}
+
+async function getSimilarMoviesForPage(page:number){
+  similarMovies.value = await movieStore.getSimilarMovies(Number(route.params.id), page);
 }
 
 onMounted(async() => {
@@ -71,23 +74,44 @@ const backgroundImageStyle = computed(() => ({
 </script>
 
 <template>
-  <img :src="backdropPathOrPlaceholder()" :alt="movie?.title" class="backdrop-img">
-  <!-- <div class="backdrop"></div> -->
-  <main class="movie-view" id="movieView">
-    <section class="movie-view">
-      <div class="poster">
-        <img :src="posterOrBackdropPath()" :alt="movie?.title">
-      </div>
-      <div class="content">
-        <h1>{{ movie?.title }}</h1>
-        <p>{{ movie?.overview }}</p>
-        <p v-if="movie?.genre_ids?.length || movie?.genres?.length">Genres: {{ movieStore.getGenreNames(movie?.genre_ids) ?? movie?.genres?.map(genre=>genre.name).join(', ') }}</p>
-        <p>Rating: {{ movie?.vote_average.toString().substring(0, 3)}}</p>
-        <p>Original Language: {{ movieStore.getLanguageEnglishName(movie?.original_language) }}</p>
-        <p>Released Date: {{ movie?.release_date }}</p>
-      </div>
-    </section>
-  </main>
+  <div v-if="movie == null || movie == undefined" class="placeholder-glow">
+    <img :src="backdropPathOrPlaceholder()" class="backdrop-img placeholder">
+    <!-- <div class="backdrop"></div> -->
+    <main class="movie-view" id="movieView">
+      <section class="movie-view">
+        <div class="poster">
+          <img :src="posterOrBackdropPath()" class="placeholder width-30"
+        </div>
+        <div class="content width-100">
+          <h1 class="placeholder heigth-40 width-50"></h1>
+          <p class="placeholder heigth-20 width-80"></p>
+          <p class="placeholder heigth-20 width-40"></p>
+          <p class="placeholder heigth-20 width-90"></p>
+          <p class="placeholder heigth-20 width-30"></p>
+          <p class="placeholder heigth-20 width-20"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div v-else class="showing">
+    <img :src="backdropPathOrPlaceholder()" :alt="movie?.title" class="backdrop-img">
+    <!-- <div class="backdrop"></div> -->
+    <main class="movie-view" id="movieView">
+      <section class="movie-view">
+        <div class="poster">
+          <img :src="posterOrBackdropPath()" :alt="movie?.title">
+        </div>
+        <div class="content">
+          <h1>{{ movie?.title }}</h1>
+          <p>{{ movie?.overview }}</p>
+          <p v-if="movie?.genre_ids?.length || movie?.genres?.length">Genres: {{ movieStore.getGenreNames(movie?.genre_ids) ?? movie?.genres?.map(genre=>genre.name).join(', ') }}</p>
+          <p>Rating: {{ movie?.vote_average.toString().substring(0, 3)}}</p>
+          <p>Original Language: {{ movieStore.getLanguageEnglishName(movie?.original_language) }}</p>
+          <p>Released Date: {{ movie?.release_date }}</p>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <div class="extra">
     <section class="youtube-trailers-container" v-if="youtubeTrailers.length">
@@ -101,23 +125,18 @@ const backgroundImageStyle = computed(() => ({
   
     <section class="similar-movies">
       <h1>Similar Movies</h1>
-      <MoviesListView class="list" :movies="similarMovies" @navigate-to-movie="movieStore.navigateToMovie" ></MoviesListView>
+      <MoviesListView :fetch-by-page="getSimilarMoviesForPage" class="list" :movies="similarMovies" @navigate-to-movie="movieStore.navigateToMovie" ></MoviesListView>
     </section>
   </div>
 </template>
 <style scoped>
 img.backdrop-img{
-  width: 100%;
+  width: 100vw;
   max-height: 110vh;
 }
-/* div.backdrop{
-  content: "";
-  background-color: black;
-  position: absolute;
-  top: 50vh;
-  height: 100vh;
-  width: 100vw;
-} */
+img.placeholder{
+  width: 30% !important;
+}
 main.movie-view{
   padding: 80vh 5% 10px 5%;
   position: relative;

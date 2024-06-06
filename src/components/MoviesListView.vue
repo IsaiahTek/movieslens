@@ -1,26 +1,35 @@
 
 <script lang="ts">
-type Movies = Movie[];
 
 import MovieCard from "./MovieCard.vue";
 import MovieCardPlaceholder from "./MovieCardPlaceholder.vue";
+
 export default {
   name: 'MoviesListView',
   components:{MovieCard, MovieCardPlaceholder},
   props: {
     movies: {
-      type: Array as () => Movies,
+      type: Object as () => MoviesApiType,
       required: true
     },
+    fetchByPage: {
+      type: Function,
+      required: true
+    }
   },
 };
 
 </script>
 <template>
-    <main>
+  <main>
+    <div>
+      <p>
+        <!-- Page {{ movies.page }} of {{ movies.total_pages }} Pages AND Showing {{ movies.results.length }} of Total {{ movies.total_results }} Results -->
+      </p>
+    </div>
       <section class="movies">
-        <template v-if="movies.length">
-          <div v-for="movie in movies" class="movie">
+        <template v-if="movies.results?.length">
+          <div v-for="movie in movies.results" class="movie">
             <MovieCard :movie="movie" @click="$emit('navigateToMovie', movie.id)" />
           </div>   
         </template>
@@ -30,8 +39,13 @@ export default {
           </div>
         </template>
       </section>
-      <div class="load-more">
-        <button>Load More...</button>
+      <div v-if="movies.total_pages" class="load-more">
+
+        <button @click="fetchByPage(1)">1</button>
+        <button @click="fetchByPage(2)">2</button>
+        <button @click="fetchByPage(3)">3</button>
+        <button @click="fetchByPage(4)">4</button>
+        <button @click="fetchByPage(movies.total_pages)">{{movies.total_pages}}</button>
       </div>
     </main>
   </template>
@@ -61,6 +75,8 @@ export default {
     margin-top: 90px;
     margin-bottom: 30vh;
     text-align: center;
+    display: flex;
+    justify-content: space-evenly;
   }
   div.load-more button{
     outline: unset;

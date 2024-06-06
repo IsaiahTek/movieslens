@@ -78,3 +78,22 @@ export async function fetchMovieTrailers(id:number){
     });
     return trailers.filter((trailer)=>trailer.type.toUpperCase() == "TRAILER");
 }
+
+export async function handleFetchAndCommit(movieType:PaginatedMoviesType, page:number, fetchType:FetchByTypeType){
+  if(movieType.pages.every(e=>e.page != page)){
+    let upcomingMovies = await fetchMovieByType(fetchType);
+    movieType = {...movieType, pages:[...movieType.pages, {page:upcomingMovies.page, movies:upcomingMovies.results, dates:upcomingMovies.dates}]}
+    return upcomingMovies;
+  }else{
+    let foundPage = movieType.pages.find(a=>a.page == page)
+    return ({page:page, results:foundPage?.movies, dates:foundPage?.dates, total_pages:movieType.total_pages, total_results: movieType.total_results}) as MoviesApiType
+  }
+}
+
+export const emptyMoviesApi : MoviesApiType = {
+  results: [],
+  dates: undefined,
+  page: 0,
+  total_pages: 0,
+  total_results: 0
+}

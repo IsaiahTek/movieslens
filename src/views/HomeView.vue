@@ -5,44 +5,37 @@ import { useRoute } from 'vue-router';
 import MoviesListView from '@/components/MoviesListView.vue';
 import MovieTile from '@/components/MovieTile.vue';
 import MovieTilePlaceholder from '@/components/MovieTilePlaceholder.vue';
+import { emptyMoviesApi } from '@/store/fetch_functions';
 
 const route = useRoute();
 const movie = ref<Movie|null>(null);
-const topRatedMovies = ref<Movie[]>([]);
+const upcomingMovies = ref<Movie[]>([]);
+const topRatedMovies = ref<MoviesApiType>(emptyMoviesApi);
 
 const movieStore = useMovieStore();
 
 onMounted(async() => {
-  topRatedMovies.value = await movieStore.getMoviesByType('TOP RATED' as MovieTypes, 1);
-  movie.value = (await movieStore.getMoviesByType('UPCOMING' as MovieTypes, 1))[0];
+  topRatedMovies.value = await movieStore.getTopRatedMovies(1);
+  upcomingMovies.value = (await movieStore.getUpcomingMovies(1)).results
+  movie.value = upcomingMovies.value[0];
 });
 
-const indexOfCurrentMovie = computed(()=>movieStore.upcomingMovies.findIndex(a=>a.id == movie.value?.id))
+const indexOfCurrentMovie = computed(()=>upcomingMovies.value.findIndex(a=>a.id == movie.value?.id))
 
-function scrollTo(){
-  const element = document.getElementById('movieView');
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
-};
+async function getTopRatedMoviesForPage(page:number){
+  console.log(`FETCHING TOP RATED MOVIES FOR PAGE ${page}`)
+  topRatedMovies.value = await movieStore.getTopRatedMovies(page);
+}
 
 function moveCurrentIndexBy(step:number){
   if(step < 0 && indexOfCurrentMovie.value == 0){
-    movie.value = movieStore.upcomingMovies[movieStore.upcomingMovies.length-1]
-  }else if(step > 0 && indexOfCurrentMovie.value == movieStore.upcomingMovies.length-1){
-    movie.value = movieStore.upcomingMovies[0]
+    movie.value = upcomingMovies.value[upcomingMovies.value.length-1]
+  }else if(step > 0 && indexOfCurrentMovie.value == upcomingMovies.value.length-1){
+    movie.value = upcomingMovies.value[0]
   }else{
-    movie.value = movieStore.upcomingMovies[indexOfCurrentMovie.value + step]
+    movie.value = upcomingMovies.value[indexOfCurrentMovie.value + step]
   }
 }
-
-// watch(() => route.params.id, async(newId, oldId) => {
-//   if(newId != oldId){
-//     scrollTo()
-//   }
-// })
-
-const imageUrl = 'https://image.tmdb.org/t/p/w300/'+movie.value?.backdrop_path;
 
 const posterOrBackdropPath = (movie:Movie|null)=>{
   let prefix = 'https://image.tmdb.org/t/p/w185/';
@@ -63,7 +56,7 @@ const backdropPathOrPlaceholder = ()=>{
   }
 }
 const upNextIndex = (id:number)=>{
-  return indexOfCurrentMovie.value + id > movieStore.upcomingMovies.length - 1 ? indexOfCurrentMovie.value + id - movieStore.upcomingMovies.length : indexOfCurrentMovie.value + id;
+  return indexOfCurrentMovie.value + id > upcomingMovies.value.length - 1 ? indexOfCurrentMovie.value + id - upcomingMovies.value.length : indexOfCurrentMovie.value + id;
 }
 </script>
 
@@ -107,10 +100,10 @@ const upNextIndex = (id:number)=>{
     </template>
     <div class="upnext-content">
       <h2>Up Next</h2>
-      <template v-if="movieStore.upcomingMovies.length">
-        <div v-for="id of 3" class="upnext" @click="movieStore.navigateToMovie(movieStore.upcomingMovies[upNextIndex(id)].id)">
-          <template v-if="typeof movieStore.upcomingMovies[upNextIndex(id)] != 'undefined'">
-            <MovieTile :movie="movieStore.upcomingMovies[upNextIndex(id)] as Movie" ></MovieTile>
+      <template v-if="upcomingMovies.length">
+        <div v-for="id of 3" class="upnext" @click="movieStore.navigateToMovie(upcomingMovies[upNextIndex(id)].id)">
+          <template v-if="typeof upcomingMovies[upNextIndex(id)] != 'undefined'">
+            <MovieTile :movie="upcomingMovies[upNextIndex(id)] as Movie" ></MovieTile>
           </template>
         </div>
       </template>
@@ -124,7 +117,7 @@ const upNextIndex = (id:number)=>{
 
   <section class="top-rated-movies">
     <h1>Top Rated Movies</h1>
-    <MoviesListView class="list" :movies="topRatedMovies" @navigate-to-movie="movieStore.navigateToMovie" ></MoviesListView>
+    <MoviesListView :fetch-by-page="getTopRatedMoviesForPage" class="list" :movies="topRatedMovies" @navigate-to-movie="movieStore.navigateToMovie" ></MoviesListView>
   </section>
 </template>
 

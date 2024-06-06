@@ -1,6 +1,6 @@
 import router from "@/router";
 import { defineStore } from "pinia";
-import { fetchMovieByID, fetchMovieByType, search, fetchMovieTrailers } from "./fetch_functions";
+import { fetchMovieByID, fetchMovieByType, search, fetchMovieTrailers, handleFetchAndCommit } from "./fetch_functions";
 
 const emptyMovies : PaginatedMoviesType = {
   total_pages: 0,
@@ -9,7 +9,7 @@ const emptyMovies : PaginatedMoviesType = {
 }
 interface MovieState{
 
-  upcomingMovies: PaginatedMoviesType,
+  upcomingMoviesStore: PaginatedMoviesType,
   topRatedMovies: PaginatedMoviesType,
   nowPlayingMovies: PaginatedMoviesType,
   popularMovies: PaginatedMoviesType,
@@ -30,7 +30,7 @@ interface MovieState{
 }
 export const useMovieStore = defineStore('movie', {
   state: (): MovieState =>({
-    upcomingMovies: emptyMovies,
+    upcomingMoviesStore: emptyMovies,
     topRatedMovies: emptyMovies,
     nowPlayingMovies: emptyMovies,
     popularMovies: emptyMovies,
@@ -1055,20 +1055,19 @@ export const useMovieStore = defineStore('movie', {
   }),
   actions:{
     async getUpcomingMovies(page:number) {
-      if(this.upcomingMovies.pages.every(e=>e.page != page)){
-        let upcomingMovies = await fetchMovieByType({type:"upcoming", page:page});
-        this.upcomingMovies = {...this.upcomingMovies, pages:[...this.upcomingMovies.pages, {page:upcomingMovies.page, movies:upcomingMovies.results, dates:upcomingMovies.dates}]}
-      }
+      return handleFetchAndCommit(this.upcomingMoviesStore, page, {type:"upcoming", page:page})
     },
-    addMovies(moviesCollection:MoviesApiType, type:MovieTypes){
-      switch (type) {
-        case "UPCOMING":
-          this.upcomingMovies = {...moviesCollection, results: [...this.upcomingMovies.results, ...moviesCollection.results as Movie[]]};
-          break;
-        default:
-          this.currentViewingMovies.push(...movies)
-          break;
-      }
+    async getPopularMovies(page:number) {
+      return handleFetchAndCommit(this.popularMovies, page, {type:"popular", page:page})
+    },
+    async getNowPlayingMovies(page:number) {
+      return handleFetchAndCommit(this.nowPlayingMovies, page, {type:"now_playing", page:page})
+    },
+    async getTopRatedMovies(page:number) {
+      return handleFetchAndCommit(this.topRatedMovies, page, {type:"top_rated", page:page})
+    },
+    async getSimilarMovies(id:number, page:number) {
+      return handleFetchAndCommit(this.topRatedMovies, page, {type:`${id}/similar`, page:page})
     },
     getMovieByID(id:number):Movie|null{
       let movie = this.currentViewingMovies.find((movie)=>movie.id==id);
@@ -1077,19 +1076,6 @@ export const useMovieStore = defineStore('movie', {
       }else{
         return null;
       }
-    },
-    async getSimilarMovies(id:number, page:number|undefined){
-      let similarMovies = await fetchMovieByType({type:`${id}/similar`, page:page??1})
-      this.addMovies(similarMovies, "SIMILAR")
-      return similarMovies;
-    },
-    async getMoviesByType(type:MovieTypes, page:number|undefined){
-      let similarMovies = await fetchMovieByType({type: type.toLocaleLowerCase().replace(" ", "_"), page:page??1})
-      this.addMovies(similarMovies, type)
-      return similarMovies;
-    },
-    incrementLastFetchedPage(){
-      this.lastFetchedPage += 1;
     },
     getGenreNames(ids:number[]|undefined):string|undefined{
       return ids?.map(id=>this.genres.find((genre)=>genre.id==id)).map(res=>res?.name).join(', ');

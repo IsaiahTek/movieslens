@@ -3,36 +3,59 @@
   import { useRouter } from 'vue-router';
   import MoviesListView from "../components/MoviesListView.vue";
   import { useMovieStore } from "@/store/movies";
+import { emptyMoviesApi } from "@/store/fetch_functions";
 
   const movieStore = useMovieStore();
 
-  onMounted(() => {
-    movieStore.getUpcomingMovies(1);
-  });
-
-  const router = useRouter();
-  const movies = ref<Movie[]>([])
   
-  const types = ["UPCOMING", "NOW PLAYING", "TOP RATED", "POPULAR"]
+  const router = useRouter();
+  const movies = ref<MoviesApiType>(emptyMoviesApi)
   
   const pageIndex = ref(0);
   
   const typeIndex = ref(0)
-
-  movies.value = movieStore.upcomingMovies;
   
+  onMounted(async() => {
+    movies.value = await movieStore.getUpcomingMovies(1);
+  });
+
+  async function handleConditionalFetchAndCommit(page:number){
+    let fetchedMovies;
+      switch (typeIndex.value) {
+        case movieTypes.indexOf("NOW PLAYING"):
+          fetchedMovies = await movieStore.getNowPlayingMovies(page)
+          break;
+        case movieTypes.indexOf("POPULAR"):
+          fetchedMovies = await movieStore.getPopularMovies(page)
+          break;
+        case movieTypes.indexOf("TOP RATED"):
+          fetchedMovies = await movieStore.getTopRatedMovies(page)
+          break;
+        default:
+          fetchedMovies = await movieStore.getUpcomingMovies(page)
+          break;
+      }
+      movies.value = fetchedMovies;
+  }
+  async function getMoviesForPage(page:number){
+    console.log(`FETCHING ${movieTypes[typeIndex.value]} MOVIES AT PAGE ${page}`)
+    await handleConditionalFetchAndCommit(page);
+  }
+
+  const movieTypes = ["UPCOMING", "NOW PLAYING", "POPULAR", "TOP RATED"]
+
   watch(()=>typeIndex.value, async(newIndex, oldIndex)=>{
     if(newIndex != oldIndex){
-      movies.value = await movieStore.getMoviesByType(types[newIndex] as MovieTypes, 1)
+      await handleConditionalFetchAndCommit(1)
     }
   })
 </script>
 <template>
   <nav class="movie-type-links">
     <h1>Explore Movies</h1>
-    <button v-for="(type, id) in types" @click="()=>typeIndex = id" :class="typeIndex==id?'active':''">{{type}}</button>
+    <button v-for="(type, id) in movieTypes" @click="()=>typeIndex = id" :class="typeIndex==id?'active':''">{{type}}</button>
   </nav>
-  <MoviesListView :movies="movies" @navigate-to-movie="movieStore.navigateToMovie" />
+  <MoviesListView :fetch-by-page="getMoviesForPage" :movies="movies" @navigate-to-movie="movieStore.navigateToMovie" />
 </template>
 
 <style scoped>
