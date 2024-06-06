@@ -2,9 +2,20 @@ import router from "@/router";
 import { defineStore } from "pinia";
 import { fetchMovieByID, fetchMovieByType, search, fetchMovieTrailers } from "./fetch_functions";
 
+const emptyMovies : PaginatedMoviesType = {
+  total_pages: 0,
+  total_results: 0,
+  pages: []
+}
 interface MovieState{
-  upcomingMovies:Movie[],
-  lastFetchedPage:number,
+
+  upcomingMovies: PaginatedMoviesType,
+  topRatedMovies: PaginatedMoviesType,
+  nowPlayingMovies: PaginatedMoviesType,
+  popularMovies: PaginatedMoviesType,
+  
+  similarMovies: PaginatedMoviesType,
+  
   currentViewingMovies:Movie[],
   searchResults: Movie[],
   genres: {
@@ -19,10 +30,13 @@ interface MovieState{
 }
 export const useMovieStore = defineStore('movie', {
   state: (): MovieState =>({
-    upcomingMovies: [],
+    upcomingMovies: emptyMovies,
+    topRatedMovies: emptyMovies,
+    nowPlayingMovies: emptyMovies,
+    popularMovies: emptyMovies,
+    similarMovies: emptyMovies,
     currentViewingMovies: [],
     searchResults: [],
-    lastFetchedPage:0,
     genres: [
       {
         "id": 28,
@@ -1041,19 +1055,15 @@ export const useMovieStore = defineStore('movie', {
   }),
   actions:{
     async getUpcomingMovies(page:number) {
-      if(page == this.lastFetchedPage+1){
+      if(this.upcomingMovies.pages.every(e=>e.page != page)){
         let upcomingMovies = await fetchMovieByType({type:"upcoming", page:page});
-        if(upcomingMovies.length > 0){
-          this.addMovies(upcomingMovies, "UPCOMING");
-          this.incrementLastFetchedPage();
-        }
+        this.upcomingMovies = {...this.upcomingMovies, pages:[...this.upcomingMovies.pages, {page:upcomingMovies.page, movies:upcomingMovies.results, dates:upcomingMovies.dates}]}
       }
     },
-    addMovies(movies:Movie[], type:MovieTypes){
+    addMovies(moviesCollection:MoviesApiType, type:MovieTypes){
       switch (type) {
         case "UPCOMING":
-          this.upcomingMovies.push(...this.upcomingMovies, ...movies);
-          this.currentViewingMovies.push(...movies)
+          this.upcomingMovies = {...moviesCollection, results: [...this.upcomingMovies.results, ...moviesCollection.results as Movie[]]};
           break;
         default:
           this.currentViewingMovies.push(...movies)

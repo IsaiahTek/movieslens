@@ -8,7 +8,7 @@ interface Movie {
     release_date:string;
     original_language:string;
     backdrop_path:string;
-    genre_ids:number[],
+    genre_ids:number[]|undefined,
     genres:{id:number, name:string}[] | undefined
 }
 type MovieTypes = "UPCOMING" | "NOWPLAYING" | "POPULAR" | "TOPRATED" | "SIMILAR"
@@ -24,4 +24,27 @@ interface Video {
     "official": boolean,
     "published_at": string,
     "id": string
+}
+interface ApiCollectionType{
+    dates: { maximum: string, minimum: string } | undefined,
+    page: number,
+    results:Video[] | Movie[],
+    total_pages: number,
+    total_results: number
+}
+interface MoviesApiType extends ApiCollectionType {
+    results: Movie[]
+}
+interface VideosApiType extends ApiCollectionType{
+    results: Video[]
+}
+type PageType = {
+    page:number,
+    movies:Movie[],
+    dates: { maximum: string, minimum: string } | undefined,
+}
+interface PaginatedMoviesType{
+    pages: PageType[],
+    total_pages: number,
+    total_results: number
 }

@@ -16,8 +16,8 @@ export async function fetchMovieByType(prop:FetchByTypeType){
         return response.json();
       }
     })
-    .then((v:{results:Movie[]})=>{
-      return v.results;
+    .then((v:MoviesApiType)=>{
+      return v;
     });
     return movie;
 }
@@ -54,8 +54,8 @@ export async function search(searchQuery:string){
         return response.json();
       }
     })
-    .then((v:{results:Movie[]})=>{
-      return v.results;
+    .then((v:MoviesApiType)=>{
+      return v.results as Movie[];
     });
     return results;
 }
@@ -73,8 +73,8 @@ export async function fetchMovieTrailers(id:number){
         return response.json();
       }
     })
-    .then((v:{results:Video[]})=>{
-      return v.results;
+    .then((v:VideosApiType)=>{
+      return v.results as Video[];
     });
     return trailers.filter((trailer)=>trailer.type.toUpperCase() == "TRAILER");
 }

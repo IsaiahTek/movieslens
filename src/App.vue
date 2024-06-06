@@ -77,6 +77,26 @@ onMounted(()=>{
   </header>
 
   <RouterView />
+  
+  <footer style="color: #fff; padding: 20px 0;">
+    <div style="max-width: 1200px; margin: auto;">
+      <div style="display: flex; justify-content: space-around;  flex-wrap: wrap; margin-bottom: 20px; flex-direction: row;">
+        <div style="width: 20%;">
+          <h2>MoviesLens</h2>
+          <p>&copy; 2024 MoviesLens. <br /> All Rights Reserved.</p>
+        </div>
+        <div style="width: 40%;">
+          <h3>About Us</h3>
+          <p>MoviesLens is your ultimate destination for movie reviews, ratings, and recommendations. Discover new movies, explore genres, and enjoy personalized suggestions tailored to your taste.</p>
+        </div>
+        <div>
+          <h3>Contact Us</h3>
+          <p>Email: <a href="mailto:support@movieslens.com" style="color: #fff; text-decoration: none;">support@movieslens.com</a></p>
+        </div>
+      </div>
+    </div>
+</footer>
+
 </template>
 
 <style scoped>
@@ -139,6 +159,18 @@ nav div.nav-links div .active a, .nav-links > .active a{
   overflow-y: scroll;
   max-height: 80vh;
   /* height: 70vh; */
+}
+footer{
+  padding: 2% 7%;
+  display: block;
+  background-color: rgb(3, 32, 30);
+  position: sticky;
+  top: bottom;
+  z-index: 1000;
+}
+footer h2, footer h3{
+  color: rgb(255, 187, 0);
+  font-weight: bold;
 }
 @media (min-width: 794px) {
   .search-result{
