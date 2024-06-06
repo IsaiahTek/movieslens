@@ -37,12 +37,6 @@ export default {
   -webkit-line-clamp: 3;
   /* text-overflow: ellipsis; */
 }
-.upnext div.primary p{
-  font-size: smaller;
-}
-.upnext div.secondary p{
-  font-size: x-small;
-}
 .upnext p{
   color: gray;
 }

@@ -56,7 +56,7 @@ export default {
   font-size: smaller;
 }
 .upnext div.secondary p{
-  font-size: x-small;
+  font-size: small;
 }
 .upnext p{
   color: gray;
