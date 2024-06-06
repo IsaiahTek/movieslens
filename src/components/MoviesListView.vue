@@ -5,7 +5,7 @@ import { ref } from "vue";
 import MovieCard from "./MovieCard.vue";
 import MovieCardPlaceholder from "./MovieCardPlaceholder.vue";
 import { setNumberOfButtons } from "@/set_buttons_amount";
-const pageIndex = ref(0)
+const pageIndex = ref(1)
 const paginationGroupCurrentIndex = ref(1);
 const paginationMaxIndex = ref(0)
 const numberOfButtons = ref(5);
