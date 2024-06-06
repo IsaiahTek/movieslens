@@ -153,7 +153,7 @@ nav div.nav-links div .active a, .nav-links > .active a{
   position: absolute;
   top: 50px;
   right: 0%;
-  background-color: rgba(1, 27, 27, 0.973);
+  background-color: rgba(1, 27, 27);
   z-index: 100;
   width: 100%;
   overflow-y: scroll;
@@ -167,6 +167,7 @@ footer{
   position: sticky;
   top: bottom;
   z-index: 1000;
+  margin-top: 20vh;
 }
 footer h2, footer h3{
   color: rgb(255, 187, 0);
