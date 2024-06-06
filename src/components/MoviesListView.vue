@@ -54,6 +54,14 @@ export default {
   beforeUpdate() {
     paginationMaxIndex.value = Math.ceil(this.movies.total_pages/numberOfButtons.value);
   },
+  watch:{
+    rebuildKey:(newKey, oldKey)=>{
+      if(newKey != oldKey){
+        pageIndex.value = 1;
+        paginationGroupCurrentIndex.value = 1;
+      }
+    }
+  },
   props: {
     movies: {
       type: Object as () => MoviesApiType,
@@ -62,6 +70,9 @@ export default {
     fetchByPage: {
       type: Function,
       required: true
+    },
+    rebuildKey:{
+      type: Number,
     }
   },
 };
@@ -70,6 +81,7 @@ export default {
 <template>
   <main>
     <section class="movies">
+      {{ rebuildKey }}
       <template v-if="movies.results?.length">
         <div v-for="movie in movies.results" class="movie">
             <MovieCard :movie="movie" @click="$emit('navigateToMovie', movie.id)" />

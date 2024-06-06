@@ -55,7 +55,7 @@ import { emptyMoviesApi } from "@/store/fetch_functions";
     <h1>Explore Movies</h1>
     <button v-for="(type, id) in movieTypes" @click="()=>typeIndex = id" :class="typeIndex==id?'active':''">{{type}}</button>
   </nav>
-  <MoviesListView :fetch-by-page="getMoviesForPage" :movies="movies" @navigate-to-movie="movieStore.navigateToMovie" />
+  <MoviesListView :rebuildKey="typeIndex" :fetch-by-page="getMoviesForPage" :movies="movies" @navigate-to-movie="movieStore.navigateToMovie" />
 </template>
 
 <style scoped>
