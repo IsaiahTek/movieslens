@@ -38,7 +38,6 @@ import { emptyMoviesApi } from "@/store/fetch_functions";
       movies.value = fetchedMovies;
   }
   async function getMoviesForPage(page:number){
-    console.log(`FETCHING ${movieTypes[typeIndex.value]} MOVIES AT PAGE ${page}`)
     await handleConditionalFetchAndCommit(page);
   }
 

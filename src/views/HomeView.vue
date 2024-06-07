@@ -23,7 +23,6 @@ onMounted(async() => {
 const indexOfCurrentMovie = computed(()=>upcomingMovies.value.findIndex(a=>a.id == movie.value?.id))
 
 async function getTopRatedMoviesForPage(page:number){
-  console.log(`FETCHING TOP RATED MOVIES FOR PAGE ${page}`)
   topRatedMovies.value = await movieStore.getTopRatedMovies(page);
 }
 

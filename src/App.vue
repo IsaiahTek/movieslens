@@ -15,7 +15,6 @@ const isTypingOrIsFocused = ref<boolean>(false);
 
 
 function handleNavigation(id:number){
-  console.log("Navigating in search")
   movieStore.navigateToMovie(id);
   showSearchResults.value = false;
 }
