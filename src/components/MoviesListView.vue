@@ -81,7 +81,6 @@ export default {
 <template>
   <main>
     <section class="movies">
-      {{ rebuildKey }}
       <template v-if="movies.results?.length">
         <div v-for="movie in movies.results" class="movie">
             <MovieCard :movie="movie" @click="$emit('navigateToMovie', movie.id)" />
