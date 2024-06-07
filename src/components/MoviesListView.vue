@@ -96,9 +96,9 @@ export default {
         <!-- <div> -->
           <button :class="canGoBack?'':'disabled'" @click="movePaginationControlsBackward()"><span>&#x2039;</span></button>
           <!-- </div> -->
-          <template v-for="page of getPaginationItemsCount(movies.total_pages)">
+          <div class="page-buttons" v-for="page of getPaginationItemsCount(movies.total_pages)">
             <button :class="checkIsCurrentPage(getCurrentPaginationItemValue(page))? 'active': '' " @click="onPageButtonClicked(getCurrentPaginationItemValue(page), fetchByPage)">{{ getCurrentPaginationItemValue(page) }}</button>
-          </template>
+          </div>
           <div>
             <button :class="canGoForward?'':'disabled'" @click="movePaginationControlsForward()"><span>&#x203A;</span></button>
           </div>
@@ -107,7 +107,7 @@ export default {
             <button @click="fetchByPage(4)">4</button>
             <button @click="fetchByPage(movies.total_pages)">{{movies.total_pages}}</button> -->
           </div>
-          <div style="text-align: center;">
+          <div style="text-align: center; font-size: 10px;">
             <p>
               Page {{ movies.page }} of {{ movies.total_pages }} Pages AND Showing {{ movies.results.length }} of Total {{ movies.total_results }} Results
             </p>
@@ -140,10 +140,10 @@ export default {
     margin-top: 90px;
     margin-bottom: 30px;
     text-align: center;
-    display: flex;
-    justify-content: space-evenly;
+    display: ruby-text;
+    /* justify-content: space-evenly;
     overflow-wrap: break-word;
-    flex-wrap: wrap;
+    flex-wrap: wrap; */
   }
   div.load-more button{
     outline: unset;
@@ -184,6 +184,17 @@ export default {
       margin: 0px 13px;
       /* min-width: 160px; */
       width: calc(calc(92%/4) - 14px);
+    }
+    div.load-more{
+      /* width: 75%; */
+      display: ruby-text;
+      justify-self: center;
+      margin-top: 10%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    div.page-buttons{
+      display: inline;
     }
   }
   @media (min-width: 1024px) {

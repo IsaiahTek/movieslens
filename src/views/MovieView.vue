@@ -131,7 +131,7 @@ const backgroundImageStyle = computed(() => ({
 </template>
 <style scoped>
 img.backdrop-img{
-  width: 100vw;
+  width: 100%;
   max-height: 110vh;
 }
 img.placeholder{

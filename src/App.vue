@@ -15,6 +15,7 @@ const isTypingOrIsFocused = ref<boolean>(false);
 
 
 function handleNavigation(id:number){
+  console.log("Navigating in search")
   movieStore.navigateToMovie(id);
   showSearchResults.value = false;
 }
@@ -38,8 +39,10 @@ onMounted(()=>{
     showSearchResults.value = true;
   };
   inputHandle!.value!.onblur = (e)=>{
-    isTypingOrIsFocused.value = false;
-    showSearchResults.value = false;
+    setTimeout(()=>{
+      isTypingOrIsFocused.value = false;
+      showSearchResults.value = false;
+    }, 300)
   }
 
 })
@@ -61,7 +64,7 @@ onMounted(()=>{
           <input v-model="search_query" placeholder="search" type="search" name="search" id="search">
         </div>
         <div class="search-result" v-if="showSearchResults && searchResults.length">
-          <div v-for="result in searchResults" class="upnext" @click="handleNavigation(result.id)">
+          <div v-for="result in searchResults" class="upnext" @click="(e)=>{handleNavigation(result.id);}">
             <template v-if="typeof result != 'undefined'">
               <MovieTile :movie="result as Movie"></MovieTile>
             </template>
@@ -101,7 +104,7 @@ onMounted(()=>{
 
 <style scoped>
 header{
-  padding: 2% 7%;
+  padding: 1% 7%;
   display: block;
   background-color: rgb(3, 32, 30);
   position: sticky;
