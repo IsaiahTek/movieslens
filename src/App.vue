@@ -85,7 +85,7 @@ onMounted(()=>{
     <div style="max-width: 1200px; margin: auto;">
       <div style="display: flex; justify-content: space-around;  flex-wrap: wrap; margin-bottom: 20px; flex-direction: row;">
         <div style="width: 20%;">
-          <h2>MoviesLens</h2>
+          <h3>MoviesLens</h3>
           <p>&copy; 2024 MoviesLens. <br /> All Rights Reserved.</p>
         </div>
         <div style="width: 40%;">
